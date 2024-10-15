@@ -55,18 +55,17 @@ public class LoggerClassFileTransformer implements ClassFileTransformer {
             }
         }
 
-        if(className.equals("com/mysql/cj/jdbc/StatementImpl")){
+        if(className.equals("com/mysql/cj/jdbc/ConnectionImpl")){
             try {
                 //类的路径替 / 换成 .
                 className = className.replace('/', '.');
                 //获取到 ctClass
                 ctClass = classPool.get(className);
                 //拿方法
-                CtMethod[] declaredMethods = ctClass.getDeclaredMethods();
-                for(CtMethod ctMethod : declaredMethods){
-                    System.out.println("StatementImpl methods ======"+ctMethod.getName());
-                    //判断方法名称 private boolean executeInternal
-                    if(ctMethod.getName().equals("executeInternal")){
+                CtMethod[] methods = ctClass.getMethods();
+                for(CtMethod ctMethod : methods){
+                    //判断方法名称 public java.sql.PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
+                    if(ctMethod.getName().equals("prepareStatement") && ctMethod.getParameterTypes().length==3){
                         //方法内部增加一行代码
                         ctMethod.insertBefore("System.out.println(\"sql=====\"+sql);");
                         ctMethod.insertBefore("sql  =  \"/*\"+Thread.currentThread().getName()+\"*/\"+sql;");
