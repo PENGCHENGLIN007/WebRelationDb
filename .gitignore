@@ -1,0 +1,5 @@
+### IntelliJ IDEA ###
+.idea
+SimpleWeb/.idea
+WebAgent/.idea
+**/target/
